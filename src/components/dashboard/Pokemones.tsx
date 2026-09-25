@@ -1,9 +1,8 @@
-// src/Pokemones.tsx
 // Consulta protegida real: GET /pokemones en el API Gateway (JWT authorizer).
 import { useState } from 'react';
-import { useApi } from './useApi';
-import { listPokemones, type Pokemon } from './api/pokemones';
-import { ApiError } from './api/client';
+import { useApi } from '../../hooks/useApi';
+import { listPokemones, type Pokemon } from '../../services/api/pokemones';
+import { ApiError } from '../../services/api/client';
 
 export function Pokemones() {
   const api = useApi();

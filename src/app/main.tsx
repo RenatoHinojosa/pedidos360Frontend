@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { PublicClientApplication, EventType } from '@azure/msal-browser';
 import type { EventMessage, AuthenticationResult } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
-import { msalConfig } from './authConfig';
+import { msalConfig } from '../services/auth/authConfig';
 import App from './App';
-import './index.css';
+import '../styles/index.css';
 
 // 1. Crear la instancia global
 const msalInstance = new PublicClientApplication(msalConfig);

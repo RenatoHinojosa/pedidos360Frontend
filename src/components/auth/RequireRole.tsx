@@ -1,4 +1,3 @@
-// src/RequireRole.tsx
 // Guard de AUTORIZACIÓN a nivel de ruta. Se anida DENTRO de <RequireAuth/> en
 // App.tsx, así que cuando este guard corre ya sabemos que hay sesión activa —
 // solo falta decidir si el usuario tiene el permiso para esta sección.
@@ -15,8 +14,8 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
-import { acquireApiToken } from './api/client';
-import { decodeJwt } from './lib/jwt';
+import { acquireApiToken } from '../../services/api/client';
+import { decodeJwt } from '../../utils/jwt';
 
 interface RequireRoleProps {
   role: string;

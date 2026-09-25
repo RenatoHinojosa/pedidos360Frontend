@@ -1,4 +1,3 @@
-// src/lib/jwt.ts
 // Decodifica el payload de un JWT SOLO para inspección en el cliente.
 // NO valida la firma: la validación real la hace el JWT authorizer del API Gateway.
 

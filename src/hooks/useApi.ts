@@ -1,4 +1,3 @@
-// src/useApi.ts
 // Hook que entrega un ApiClient ya ligado a la cuenta MSAL activa.
 // Uso:
 //   const api = useApi();
@@ -6,7 +5,7 @@
 
 import { useMemo } from 'react';
 import { useMsal } from '@azure/msal-react';
-import { createApiClient, type ApiClient } from './api/client';
+import { createApiClient, type ApiClient } from '../services/api/client';
 
 export function useApi(): ApiClient | null {
   const { instance, accounts } = useMsal();

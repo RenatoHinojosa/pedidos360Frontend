@@ -1,4 +1,3 @@
-// src/api/pokemones.ts
 // Ruta de ejemplo del backend. Cada recurso nuevo va en su propio archivo y
 // reutiliza el ApiClient (que ya resuelve token + Authorization + errores).
 

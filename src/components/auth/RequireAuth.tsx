@@ -1,4 +1,4 @@
-// src/RequireAuth.tsx
+// Guard de autenticación a nivel de ruta.
 // Guard de AUTENTICACIÓN a nivel de ruta. Se usa como "layout route" en
 // App.tsx envolviendo un <Outlet/>: agrupa todas las rutas que exigen sesión
 // activa en un solo lugar, en vez de repetir un "if (isAuthenticated)" en
@@ -10,7 +10,7 @@
 import { Outlet } from 'react-router-dom';
 import { MsalAuthenticationTemplate } from '@azure/msal-react';
 import { InteractionType } from '@azure/msal-browser';
-import { loginRequest } from './authConfig';
+import { loginRequest } from '../../services/auth/authConfig';
 
 export function RequireAuth() {
   return (

@@ -1,12 +1,11 @@
-// src/api/client.ts
 // Cliente HTTP reutilizable para el backend protegido por API Gateway + JWT authorizer.
 // Se encarga de: obtener el access token de Entra (aud = tu API), inyectar el
 // header Authorization, y normalizar errores. Añade rutas nuevas en archivos
-// hermanos (p.ej. src/api/pokemones.ts) usando este cliente.
+// hermanos (p.ej. services/api/pokemones.ts) usando este cliente.
 
 import type { IPublicClientApplication, AccountInfo } from '@azure/msal-browser';
 import { BrowserAuthError, InteractionRequiredAuthError } from '@azure/msal-browser';
-import { apiConfig, apiRequest } from '../authConfig';
+import { apiConfig, apiRequest } from '../auth/authConfig';
 
 export class ApiError extends Error {
   status: number;

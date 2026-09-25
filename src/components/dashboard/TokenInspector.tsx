@@ -1,10 +1,9 @@
-// src/TokenInspector.tsx
 // Herramienta de aprendizaje: obtiene el access token para la API y muestra
 // sus claims relevantes para autorización (aud, scp, roles, exp).
 import { useState } from 'react';
 import { useMsal } from '@azure/msal-react';
-import { acquireApiToken } from './api/client';
-import { decodeJwt, scopesOf, type JwtClaims } from './lib/jwt';
+import { acquireApiToken } from '../../services/api/client';
+import { decodeJwt, scopesOf, type JwtClaims } from '../../utils/jwt';
 
 export function TokenInspector() {
   const { instance, accounts } = useMsal();
