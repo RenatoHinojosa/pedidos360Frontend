@@ -20,6 +20,7 @@ export function OrderList({ orders, onSelect }: OrderListProps) {
       <div className="orders-list-row orders-list-header" role="row">
         <span>Pedido</span><span>Cliente</span><span>Artículos</span><span>Importe</span><span>Estado</span><span />
       </div>
+      {orders.length === 0 && <p className="empty-state">No encontramos pedidos con esos criterios.</p>}
       {orders.map((order) => (
         <button className="orders-list-row orders-list-data" key={order.id} onClick={() => onSelect(order)} type="button">
           <strong>{order.id}</strong><span>{order.customer}</span><span>{order.items} productos</span><span>{order.amount}</span><OrderStatusBadge status={order.status} /><span className="row-arrow">→</span>
