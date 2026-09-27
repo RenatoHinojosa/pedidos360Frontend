@@ -1,5 +1,6 @@
 import { OrderStatusBadge, type OrderStatus } from './OrderStatusBadge';
 import type { Order } from './OrderList';
+import { formatCLP } from '../../utils/currency';
 
 interface OrderDetailProps {
   order: Order | null;
@@ -18,7 +19,7 @@ export function OrderDetail({ order, canUpdateStatus, onClose }: OrderDetailProp
       <div className="detail-status"><OrderStatusBadge status={order.status} /><span>{order.date}</span></div>
       <div className="detail-block"><span>Cliente</span><strong>{order.customer}</strong></div>
       <div className="detail-block"><span>Contenido</span><strong>{order.items} productos</strong></div>
-      <div className="detail-block"><span>Total del pedido</span><strong className="detail-total">{order.amount}</strong></div>
+      <div className="detail-block"><span>Total del pedido</span><strong className="detail-total">{formatCLP(order.amount)}</strong></div>
       {canUpdateStatus && <button className="btn btn-login detail-action" type="button">Marcar como {nextStatus === 'ACCEPTED' ? 'aceptado' : 'en proceso'}</button>}
     </aside>
   );

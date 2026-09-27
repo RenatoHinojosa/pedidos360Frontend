@@ -114,6 +114,12 @@ p { text-wrap: pretty; }
 .product-secondary-action { background: var(--canvas); color: var(--green-dark); }
 .product-secondary-action:hover { background: var(--canvas-deep); }
 .product-order-action { border-radius: 4px; }
+.product-delete-action, .product-delete-confirm { background: var(--red); border-radius: 4px; color: #fff; }
+.product-delete-action:hover, .product-delete-confirm:hover { background: #873b35; box-shadow: 0 8px 18px rgba(166,74,66,.18); transform: translateY(-1px); }
+.delete-eyebrow { color: var(--red); }
+.delete-copy { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.delete-copy strong { color: var(--ink); }
+.delete-product-form label strong { color: var(--ink); font-weight: 700; }
 .order-product-copy { color: var(--muted); font-size: 13px; line-height: 1.5; }
 .order-total { border-top: 1px solid var(--line); color: var(--muted); display: flex; justify-content: space-between; margin-top: 22px; padding-top: 16px; }
 .order-total strong { color: var(--green); font-family: 'Space Grotesk', sans-serif; font-size: 19px; }

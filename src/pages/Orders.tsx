@@ -6,10 +6,10 @@ import { useAppRole } from '../hooks/useAppRole';
 import { canCreateOrders, canManageOrders } from '../types/auth';
 
 const demoOrders: Order[] = [
-  { id: '#PED-1048', customer: 'Comercial Nova', items: 8, amount: '$1,240.00', date: '25 Sep, 2026 · 09:42', status: 'COMPLETED' },
-  { id: '#PED-1047', customer: 'Grupo Andino', items: 4, amount: '$860.50', date: '25 Sep, 2026 · 09:15', status: 'IN_PROGRESS' },
-  { id: '#PED-1046', customer: 'Distribuciones Sol', items: 12, amount: '$2,108.00', date: '25 Sep, 2026 · 08:51', status: 'CREATED' },
-  { id: '#PED-1045', customer: 'Mercado Central', items: 3, amount: '$420.00', date: '24 Sep, 2026 · 17:20', status: 'ACCEPTED' },
+  { id: '#PED-1048', customer: 'Comercial Nova', items: 8, amount: 1240, date: '25 Sep, 2026 · 09:42', status: 'COMPLETED' },
+  { id: '#PED-1047', customer: 'Grupo Andino', items: 4, amount: 860.5, date: '25 Sep, 2026 · 09:15', status: 'IN_PROGRESS' },
+  { id: '#PED-1046', customer: 'Distribuciones Sol', items: 12, amount: 2108, date: '25 Sep, 2026 · 08:51', status: 'CREATED' },
+  { id: '#PED-1045', customer: 'Mercado Central', items: 3, amount: 420, date: '24 Sep, 2026 · 17:20', status: 'ACCEPTED' },
 ];
 
 export function Orders() {

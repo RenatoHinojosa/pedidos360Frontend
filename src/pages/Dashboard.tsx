@@ -6,6 +6,7 @@ import { TokenInspector } from '../components/dashboard/TokenInspector';
 import { Pokemones } from '../components/dashboard/Pokemones';
 import { useAppRole } from '../hooks/useAppRole';
 import type { AppRole } from '../types/auth';
+import { formatCLP } from '../utils/currency';
 
 const roleLabels: Record<AppRole, string> = {
   ADMIN: 'Vista global',
@@ -16,7 +17,7 @@ const roleLabels: Record<AppRole, string> = {
 const roleMetrics: Record<AppRole, Array<{ label: string; value: string; note: string; icon: string; tone?: string }>> = {
   ADMIN: [
     { label: 'Pedidos globales', value: '128', note: '+12.5% frente a ayer', icon: '▤', tone: 'primary' },
-    { label: 'Ventas del mes', value: '$48.6k', note: '+8.7% frente al mes anterior', icon: '$' },
+    { label: 'Ventas del mes', value: formatCLP(48600), note: '+8.7% frente al mes anterior', icon: '$' },
     { label: 'Usuarios activos', value: '86', note: '12 usuarios en línea', icon: '◎' },
     { label: 'Productos activos', value: '1,284', note: '+4.2% este mes', icon: '◈' },
   ],
@@ -67,13 +68,13 @@ export function Dashboard() {
       {role === 'OPERATOR' && <section className="dashboard-grid role-view-grid">
         <article className="dashboard-card order-summary"><div className="card-heading"><div><h2>Cola operativa</h2><p>Pedidos que requieren seguimiento</p></div><Link className="text-action" to="/orders">Abrir pedidos <span aria-hidden="true">→</span></Link></div><div className="operator-queue"><div><strong>24</strong><span>Pendientes por aceptar</span></div><div><strong>58</strong><span>En proceso</span></div><div><strong>7</strong><span>Requieren atención</span></div></div></article>
         <article className="dashboard-card quick-actions"><div className="card-heading"><div><h2>Acciones operativas</h2><p>Atiende la cola de hoy</p></div></div><div className="action-list"><Link to="/orders"><span className="action-icon green">▤</span><span><strong>Revisar pendientes</strong><small>Ordena por prioridad</small></span><span>→</span></Link><Link to="/catalog"><span className="action-icon lime">◈</span><span><strong>Consultar catálogo</strong><small>Ver disponibilidad</small></span><span>→</span></Link></div></article>
-        <article className="dashboard-card recent-orders"><div className="card-heading"><div><h2>Pedidos en curso</h2><p>Actividad que necesita seguimiento</p></div><Link className="text-action" to="/orders">Ver todos <span aria-hidden="true">→</span></Link></div><div className="orders-table" role="table" aria-label="Pedidos en curso"><div className="orders-row orders-header" role="row"><span>Pedido</span><span>Cliente</span><span>Importe</span><span>Estado</span></div><div className="orders-row" role="row"><strong>#PED-1047</strong><span>Grupo Andino</span><span>$860.50</span><em className="status-pill process">En proceso</em></div><div className="orders-row" role="row"><strong>#PED-1046</strong><span>Distribuciones Sol</span><span>$2,108.00</span><em className="status-pill pending-pill">Pendiente</em></div></div></article>
+        <article className="dashboard-card recent-orders"><div className="card-heading"><div><h2>Pedidos en curso</h2><p>Actividad que necesita seguimiento</p></div><Link className="text-action" to="/orders">Ver todos <span aria-hidden="true">→</span></Link></div><div className="orders-table" role="table" aria-label="Pedidos en curso"><div className="orders-row orders-header" role="row"><span>Pedido</span><span>Cliente</span><span>Importe</span><span>Estado</span></div><div className="orders-row" role="row"><strong>#PED-1047</strong><span>Grupo Andino</span><span>{formatCLP(860.5)}</span><em className="status-pill process">En proceso</em></div><div className="orders-row" role="row"><strong>#PED-1046</strong><span>Distribuciones Sol</span><span>{formatCLP(2108)}</span><em className="status-pill pending-pill">Pendiente</em></div></div></article>
       </section>}
 
       {role === 'CLIENTE' && <section className="dashboard-grid role-view-grid">
         <article className="dashboard-card order-summary"><div className="card-heading"><div><h2>Mis pedidos</h2><p>Estado actual de tus órdenes</p></div><Link className="text-action" to="/orders">Ver historial <span aria-hidden="true">→</span></Link></div><div className="customer-status"><strong>3</strong><span>pedidos en proceso</span><div className="status-track"><i /><i /><i /><i /></div><small>El más reciente está siendo preparado</small></div></article>
         <article className="dashboard-card quick-actions"><div className="card-heading"><div><h2>Comprar</h2><p>Encuentra lo que necesitas</p></div></div><div className="action-list"><Link to="/catalog"><span className="action-icon lime">◈</span><span><strong>Explorar catálogo</strong><small>Crea una orden por producto</small></span><span>→</span></Link><Link to="/orders"><span className="action-icon green">▤</span><span><strong>Consultar pedidos</strong><small>Revisa estados y fechas</small></span><span>→</span></Link></div></article>
-        <article className="dashboard-card recent-orders"><div className="card-heading"><div><h2>Últimos pedidos</h2><p>Tu actividad más reciente</p></div><Link className="text-action" to="/orders">Ver todos <span aria-hidden="true">→</span></Link></div><div className="orders-table" role="table" aria-label="Últimos pedidos"><div className="orders-row orders-header" role="row"><span>Pedido</span><span>Cliente</span><span>Importe</span><span>Estado</span></div><div className="orders-row" role="row"><strong>#PED-1048</strong><span>Tu pedido</span><span>$1,240.00</span><em className="status-pill ready">Completado</em></div><div className="orders-row" role="row"><strong>#PED-1047</strong><span>Tu pedido</span><span>$860.50</span><em className="status-pill process">En proceso</em></div></div></article>
+        <article className="dashboard-card recent-orders"><div className="card-heading"><div><h2>Últimos pedidos</h2><p>Tu actividad más reciente</p></div><Link className="text-action" to="/orders">Ver todos <span aria-hidden="true">→</span></Link></div><div className="orders-table" role="table" aria-label="Últimos pedidos"><div className="orders-row orders-header" role="row"><span>Pedido</span><span>Cliente</span><span>Importe</span><span>Estado</span></div><div className="orders-row" role="row"><strong>#PED-1048</strong><span>Tu pedido</span><span>{formatCLP(1240)}</span><em className="status-pill ready">Completado</em></div><div className="orders-row" role="row"><strong>#PED-1047</strong><span>Tu pedido</span><span>{formatCLP(860.5)}</span><em className="status-pill process">En proceso</em></div></div></article>
       </section>}
 
       <section className={`dashboard-grid${role === 'ADMIN' ? '' : ' role-admin-only'}`}>
@@ -104,9 +105,9 @@ export function Dashboard() {
           <div className="card-heading"><div><h2>Pedidos recientes</h2><p>Últimos movimientos de la operación</p></div><Link className="text-action" to="/orders">Ver todos <span aria-hidden="true">→</span></Link></div>
           <div className="orders-table" role="table" aria-label="Pedidos recientes">
             <div className="orders-row orders-header" role="row"><span>Pedido</span><span>Cliente</span><span>Importe</span><span>Estado</span></div>
-            <div className="orders-row" role="row"><strong>#PED-1048</strong><span>Comercial Nova</span><span>$1,240.00</span><em className="status-pill ready">Completado</em></div>
-            <div className="orders-row" role="row"><strong>#PED-1047</strong><span>Grupo Andino</span><span>$860.50</span><em className="status-pill process">En proceso</em></div>
-            <div className="orders-row" role="row"><strong>#PED-1046</strong><span>Distribuciones Sol</span><span>$2,108.00</span><em className="status-pill pending-pill">Pendiente</em></div>
+            <div className="orders-row" role="row"><strong>#PED-1048</strong><span>Comercial Nova</span><span>{formatCLP(1240)}</span><em className="status-pill ready">Completado</em></div>
+            <div className="orders-row" role="row"><strong>#PED-1047</strong><span>Grupo Andino</span><span>{formatCLP(860.5)}</span><em className="status-pill process">En proceso</em></div>
+            <div className="orders-row" role="row"><strong>#PED-1046</strong><span>Distribuciones Sol</span><span>{formatCLP(2108)}</span><em className="status-pill pending-pill">Pendiente</em></div>
           </div>
         </article>
       </section>
