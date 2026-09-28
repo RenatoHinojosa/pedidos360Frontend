@@ -28,6 +28,11 @@ export async function createProducto(api: ApiClient, data: ProductoInput) {
   return res.producto;
 }
 
+export async function updateProducto(api: ApiClient, productId: string, data: ProductoInput) {
+  const res = await api.put<{ mensaje: string; producto: ProductoDTO }>(`/productos/${encodeURIComponent(productId)}`, data);
+  return res.producto;
+}
+
 export async function deleteProducto(api: ApiClient, productId: string) {
   return api.del<{ mensaje: string }>(`/productos/${encodeURIComponent(productId)}`);
 }

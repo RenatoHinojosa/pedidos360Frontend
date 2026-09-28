@@ -1,18 +1,20 @@
 import { useState } from 'react';
 import { useApi } from '../../hooks/useApi';
-import { createProducto } from '../../services/api/productos';
+import { createProducto, updateProducto } from '../../services/api/productos';
+import type { Product } from './ProductCard';
 import { CATEGORIAS_FIJAS, OPCION_NUEVA_CATEGORIA, normalizarCategoria } from '../../constants/categories';
 
 interface ProductFormProps {
   onClose: () => void;
-  onCreated: () => void;
+  onSaved: () => void;
+  product?: Product;
 }
 
-export function ProductForm({ onClose, onCreated }: ProductFormProps) {
+export function ProductForm({ onClose, onSaved, product }: ProductFormProps) {
   const api = useApi();
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(product?.category ?? '');
   const [categoriaNueva, setCategoriaNueva] = useState('');
 
   const mostrarInputNueva = categoriaSeleccionada === OPCION_NUEVA_CATEGORIA;
@@ -21,6 +23,7 @@ export function ProductForm({ onClose, onCreated }: ProductFormProps) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = String(form.get('name') ?? '').trim();
+    const description = String(form.get('description') ?? '').trim();
     const price = Number(form.get('price'));
     const stock = Number(form.get('stock'));
 
@@ -41,13 +44,19 @@ export function ProductForm({ onClose, onCreated }: ProductFormProps) {
     setError('');
     setSubmitting(true);
     try {
-      await createProducto(api, {
+      const data = {
         nombre: name,
         categoria: category,
         precio: price,
         stock,
-      });
-      onCreated();
+        descripcion: description || undefined,
+      };
+      if (product) {
+        await updateProducto(api, product.id, data);
+      } else {
+        await createProducto(api, data);
+      }
+      onSaved();
     } catch (err) {
       setError('No se pudo guardar el producto. Verifica tu conexión o permisos.');
       console.error(err);
@@ -58,8 +67,8 @@ export function ProductForm({ onClose, onCreated }: ProductFormProps) {
 
   return (
     <form className="product-form" onSubmit={handleSubmit}>
-      <div className="form-heading"><div><span className="eyebrow">Catálogo</span><h2 id="product-form-title">Nuevo producto</h2></div><button aria-label="Cerrar formulario" className="detail-close" onClick={onClose} type="button">×</button></div>
-      <label>Nombre del producto<input name="name" placeholder="Ej. Pack oficina esencial" /></label>
+      <div className="form-heading"><div><span className="eyebrow">Catálogo</span><h2 id="product-form-title">{product ? 'Editar producto' : 'Nuevo producto'}</h2></div><button aria-label="Cerrar formulario" className="detail-close" onClick={onClose} type="button">×</button></div>
+      <label>Nombre del producto<input defaultValue={product?.name} name="name" placeholder="Ej. Pack oficina esencial" /></label>
       <label>
         Categoría
         <select
@@ -81,9 +90,10 @@ export function ProductForm({ onClose, onCreated }: ProductFormProps) {
           />
         </label>
       )}
-      <div className="form-columns"><label>Precio en CLP<input min="1" name="price" placeholder="$ 0" step="1" type="number" /></label><label>Stock inicial<input name="stock" placeholder="0" type="number" /></label></div>
+      <div className="form-columns"><label>Precio en CLP<input defaultValue={product?.price} min="1" name="price" placeholder="$ 0" step="1" type="number" /></label><label>Stock inicial<input defaultValue={product?.stock} name="stock" placeholder="0" type="number" /></label></div>
+      <label>Descripción del producto<textarea defaultValue={product?.description} name="description" placeholder="Ej. Monitor Full HD 1920x1080, panel IPS, entrada HDMI/VGA" rows={4} /></label>
       {error && <p className="form-error" role="alert">{error}</p>}
-      <div className="form-actions"><button className="btn form-cancel" onClick={onClose} type="button">Cancelar</button><button className="btn btn-login" disabled={submitting} type="submit">{submitting ? 'Guardando…' : 'Guardar producto'} <span aria-hidden="true">→</span></button></div>
+      <div className="form-actions"><button className="btn form-cancel" onClick={onClose} type="button">Cancelar</button><button className="btn btn-login" disabled={submitting} type="submit">{submitting ? 'Guardando…' : product ? 'Actualizar producto' : 'Guardar producto'} <span aria-hidden="true">→</span></button></div>
     </form>
   );
 }

@@ -1,11 +1,12 @@
-export type OrderStatus = 'CREATED' | 'ACCEPTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+export type OrderStatus = 'CREADO' | 'ACEPTADO' | 'EN_PREPARACION' | 'DESPACHADO' | 'ENTREGADO' | 'CANCELADO';
 
 const statusLabels: Record<OrderStatus, string> = {
-  CREATED: 'Creado',
-  ACCEPTED: 'Aceptado',
-  IN_PROGRESS: 'En proceso',
-  COMPLETED: 'Completado',
-  CANCELLED: 'Cancelado',
+  CREADO: 'Creado',
+  ACEPTADO: 'Aceptado',
+  EN_PREPARACION: 'En preparación',
+  DESPACHADO: 'Despachado',
+  ENTREGADO: 'Entregado',
+  CANCELADO: 'Cancelado',
 };
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {

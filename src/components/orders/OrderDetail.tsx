@@ -1,26 +1,82 @@
+import { useState } from 'react';
 import { OrderStatusBadge, type OrderStatus } from './OrderStatusBadge';
 import type { Order } from './OrderList';
 import { formatCLP } from '../../utils/currency';
+import { useApi } from '../../hooks/useApi';
+import { updateEstadoOrden } from '../../services/api/ordenes';
+
+// Espejo de TRANSICIONES_VALIDAS del backend, solo para decidir qué botones
+// mostrar. El backend sigue siendo quien valida de verdad.
+const TRANSICIONES: Record<OrderStatus, OrderStatus[]> = {
+  CREADO: ['ACEPTADO', 'CANCELADO'],
+  ACEPTADO: ['EN_PREPARACION', 'CANCELADO'],
+  EN_PREPARACION: ['DESPACHADO', 'CANCELADO'],
+  DESPACHADO: ['ENTREGADO'],
+  ENTREGADO: [],
+  CANCELADO: [],
+};
+
+const STATUS_LABELS: Record<OrderStatus, string> = {
+  CREADO: 'creado',
+  ACEPTADO: 'aceptado',
+  EN_PREPARACION: 'en preparación',
+  DESPACHADO: 'despachado',
+  ENTREGADO: 'entregado',
+  CANCELADO: 'cancelado',
+};
 
 interface OrderDetailProps {
   order: Order | null;
   canUpdateStatus: boolean;
+  isCliente: boolean;
   onClose: () => void;
+  onUpdated: () => void;
 }
 
-export function OrderDetail({ order, canUpdateStatus, onClose }: OrderDetailProps) {
+export function OrderDetail({ order, canUpdateStatus, isCliente, onClose, onUpdated }: OrderDetailProps) {
+  const api = useApi();
+  const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState('');
+
   if (!order) return null;
 
-  const nextStatus: OrderStatus = order.status === 'CREATED' ? 'ACCEPTED' : 'IN_PROGRESS';
+  const transicionesDisponibles = TRANSICIONES[order.status];
+  const avanzar = transicionesDisponibles.find((s) => s !== 'CANCELADO');
+  const puedeCancelar = transicionesDisponibles.includes('CANCELADO');
+
+  async function cambiarEstado(nuevoEstado: OrderStatus) {
+    if (!api || !order) return;
+    setError('');
+    setUpdating(true);
+    try {
+      await updateEstadoOrden(api, order.id, nuevoEstado);
+      onUpdated();
+    } catch (err) {
+      setError('No se pudo actualizar el estado del pedido.');
+      console.error(err);
+    } finally {
+      setUpdating(false);
+    }
+  }
+
+  // Un Operador/Admin puede avanzar o cancelar en cualquier transición válida.
+  // Un Cliente solo puede cancelar, y solo mientras el pedido siga en CREADO.
+  const puedeAvanzar = canUpdateStatus && avanzar;
+  const puedeMostrarCancelar = (canUpdateStatus && puedeCancelar) || (isCliente && order.status === 'CREADO' && puedeCancelar);
 
   return (
     <aside className="order-detail" aria-label={`Detalle del pedido ${order.id}`}>
       <div className="detail-header"><div><span className="eyebrow">Detalle del pedido</span><h2>{order.id}</h2></div><button className="detail-close" onClick={onClose} type="button">×</button></div>
       <div className="detail-status"><OrderStatusBadge status={order.status} /><span>{order.date}</span></div>
-      <div className="detail-block"><span>Cliente</span><strong>{order.customer}</strong></div>
-      <div className="detail-block"><span>Contenido</span><strong>{order.items} productos</strong></div>
+      <div className="detail-block"><span>Producto</span><strong>{order.productName}</strong></div>
+      <div className="detail-block"><span>Correo del cliente</span><strong className="detail-email">{order.customer}</strong></div>
+      <div className="detail-block"><span>Cantidad</span><strong>{order.items} unidades</strong></div>
       <div className="detail-block"><span>Total del pedido</span><strong className="detail-total">{formatCLP(order.amount)}</strong></div>
-      {canUpdateStatus && <button className="btn btn-login detail-action" type="button">Marcar como {nextStatus === 'ACCEPTED' ? 'aceptado' : 'en proceso'}</button>}
+      {error && <p className="form-error" role="alert">{error}</p>}
+      <div className="detail-actions">
+        {puedeAvanzar && avanzar && <button className="btn btn-login detail-action" disabled={updating} onClick={() => cambiarEstado(avanzar)} type="button">{updating ? 'Actualizando…' : `Marcar como ${STATUS_LABELS[avanzar]}`}</button>}
+        {puedeMostrarCancelar && <button className="btn form-cancel detail-action" disabled={updating} onClick={() => cambiarEstado('CANCELADO')} type="button">Cancelar pedido</button>}
+      </div>
     </aside>
   );
 }

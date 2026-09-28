@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { Product } from './ProductCard';
 import { formatCLP } from '../../utils/currency';
+import { useApi } from '../../hooks/useApi';
+import { createOrden } from '../../services/api/ordenes';
 
 interface ProductOrderFormProps {
   product: Product;
@@ -9,17 +11,33 @@ interface ProductOrderFormProps {
 }
 
 export function ProductOrderForm({ product, onClose, onCreated }: ProductOrderFormProps) {
+  const api = useApi();
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > product.stock) {
       setError(`Indica una cantidad entre 1 y ${product.stock}.`);
       return;
     }
+    if (!api) {
+      setError('No hay sesión activa.');
+      return;
+    }
+
     setError('');
-    onCreated();
+    setSubmitting(true);
+    try {
+      await createOrden(api, product.id, quantity);
+      onCreated();
+    } catch (err) {
+      setError('No se pudo crear el pedido. Verifica el stock disponible.');
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,7 +47,7 @@ export function ProductOrderForm({ product, onClose, onCreated }: ProductOrderFo
       <label>Cantidad<input min="1" max={product.stock} name="quantity" onChange={(event) => setQuantity(Number(event.target.value))} type="number" value={quantity} /></label>
       {error && <p className="form-error" role="alert">{error}</p>}
       <p className="order-total">Total estimado <strong>{formatCLP(product.price * quantity)}</strong></p>
-      <div className="form-actions"><button className="btn form-cancel" onClick={onClose} type="button">Cancelar</button><button className="btn btn-login" type="submit">Confirmar pedido</button></div>
+      <div className="form-actions"><button className="btn form-cancel" onClick={onClose} type="button">Cancelar</button><button className="btn btn-login" disabled={submitting} type="submit">{submitting ? 'Enviando…' : 'Confirmar pedido'}</button></div>
     </form>
   );
 }
