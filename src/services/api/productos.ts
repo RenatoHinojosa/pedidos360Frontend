@@ -23,6 +23,11 @@ export async function listProductos(api: ApiClient, categoria?: string) {
   return res.productos;
 }
 
+export async function getProducto(api: ApiClient, productId: string) {
+  const res = await api.get<{ producto: ProductoDTO }>(`/productos/${encodeURIComponent(productId)}`);
+  return res.producto;
+}
+
 export async function createProducto(api: ApiClient, data: ProductoInput) {
   const res = await api.post<{ mensaje: string; producto: ProductoDTO }>('/productos', data);
   return res.producto;
