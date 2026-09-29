@@ -19,6 +19,11 @@ export async function listOrdenes(api: ApiClient) {
   return res.ordenes;
 }
 
+export async function getOrden(api: ApiClient, orderId: string) {
+  const res = await api.get<{ orden: OrdenDTO }>(`/orders/${orderId}`);
+  return res.orden;
+}
+
 export async function createOrden(api: ApiClient, productId: string, cantidad: number) {
   const res = await api.post<{ mensaje: string; orden: OrdenDTO }>('/orders', { productId, cantidad });
   return res.orden;

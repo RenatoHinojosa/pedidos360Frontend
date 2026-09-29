@@ -3,6 +3,7 @@ import { OrderStatusBadge, type OrderStatus } from './OrderStatusBadge';
 import type { Order } from './OrderList';
 import { formatCLP } from '../../utils/currency';
 import { useApi } from '../../hooks/useApi';
+import { ApiError } from '../../services/api/client';
 import { updateEstadoOrden } from '../../services/api/ordenes';
 
 // Espejo de TRANSICIONES_VALIDAS del backend, solo para decidir qué botones
@@ -30,10 +31,11 @@ interface OrderDetailProps {
   canUpdateStatus: boolean;
   isCliente: boolean;
   onClose: () => void;
+  onOpenDetail: () => void;
   onUpdated: () => void;
 }
 
-export function OrderDetail({ order, canUpdateStatus, isCliente, onClose, onUpdated }: OrderDetailProps) {
+export function OrderDetail({ order, canUpdateStatus, isCliente, onClose, onOpenDetail, onUpdated }: OrderDetailProps) {
   const api = useApi();
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState('');
@@ -52,7 +54,15 @@ export function OrderDetail({ order, canUpdateStatus, isCliente, onClose, onUpda
       await updateEstadoOrden(api, order.id, nuevoEstado);
       onUpdated();
     } catch (err) {
-      setError('No se pudo actualizar el estado del pedido.');
+      if (err instanceof ApiError) {
+        const body = err.body as { mensaje?: unknown } | null;
+        const message = typeof body?.mensaje === 'string'
+          ? body.mensaje
+          : `No se pudo actualizar el pedido (API ${err.status}).`;
+        setError(message);
+      } else {
+        setError(err instanceof Error ? err.message : 'No se pudo actualizar el estado del pedido.');
+      }
       console.error(err);
     } finally {
       setUpdating(false);
@@ -69,9 +79,9 @@ export function OrderDetail({ order, canUpdateStatus, isCliente, onClose, onUpda
       <div className="detail-header"><div><span className="eyebrow">Detalle del pedido</span><h2>{order.id}</h2></div><button className="detail-close" onClick={onClose} type="button">×</button></div>
       <div className="detail-status"><OrderStatusBadge status={order.status} /><span>{order.date}</span></div>
       <div className="detail-block"><span>Producto</span><strong>{order.productName}</strong></div>
-      <div className="detail-block"><span>Correo del cliente</span><strong className="detail-email">{order.customer}</strong></div>
       <div className="detail-block"><span>Cantidad</span><strong>{order.items} unidades</strong></div>
       <div className="detail-block"><span>Total del pedido</span><strong className="detail-total">{formatCLP(order.amount)}</strong></div>
+      <button className="btn detail-info-action" onClick={onOpenDetail} type="button">Información detallada</button>
       {error && <p className="form-error" role="alert">{error}</p>}
       <div className="detail-actions">
         {puedeAvanzar && avanzar && <button className="btn btn-login detail-action" disabled={updating} onClick={() => cambiarEstado(avanzar)} type="button">{updating ? 'Actualizando…' : `Marcar como ${STATUS_LABELS[avanzar]}`}</button>}
